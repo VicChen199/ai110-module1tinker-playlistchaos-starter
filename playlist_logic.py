@@ -174,19 +174,27 @@ def search_songs(
     return filtered
 
 
-def lucky_pick(
-    playlists: PlaylistMap,
-    mode: str = "any",
-) -> Optional[Song]:
-    """Pick a song from the playlists according to mode."""
-    if mode == "hype":
+def lucky_pick(playlists, mode="any"):
+    """Randomly pick a song from the specified playlist(s)."""
+    import random
+
+    if mode == "any":
+        # Combine all playlists, including Mixed if present
+        all_songs = []
+        for key in playlists:
+            all_songs.extend(playlists[key])
+        if not all_songs:
+            return None
+        return random.choice(all_songs)
+    elif mode == "hype":
         songs = playlists.get("Hype", [])
     elif mode == "chill":
         songs = playlists.get("Chill", [])
     else:
-        songs = playlists.get("Hype", []) + playlists.get("Chill", [])
-
-    return random_choice_or_none(songs)
+        songs = []
+    if not songs:
+        return None
+    return random.choice(songs)
 
 
 def random_choice_or_none(songs: List[Song]) -> Optional[Song]:
